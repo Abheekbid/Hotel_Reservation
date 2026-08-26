@@ -1,0 +1,16 @@
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Build output
+bin/
+build/
+target/
+
+# Tomcat
+*.war
+
+# OS
+Thumbs.db
+.DS_Store

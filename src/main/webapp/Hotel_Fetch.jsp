@@ -4,10 +4,15 @@
     @SuppressWarnings("unchecked")
     ArrayList<HashMap<String, String>> hotelList =
         (ArrayList<HashMap<String, String>>) request.getAttribute("hotelList");
+    
     if (hotelList == null) {
         response.sendRedirect(request.getContextPath() + "/hotel_fetch");
         return;
     }
+
+    // Check if user is logged in
+    String loggedInUser = (String) session.getAttribute("user_id");
+    boolean isLoggedIn = (loggedInUser != null && !loggedInUser.isEmpty());
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,7 +48,6 @@
         color: var(--parchment);
     }
 
-    /* ---------- Top bar ---------- */
     .topbar {
         display: flex;
         align-items: center;
@@ -78,7 +82,6 @@
     }
     .topbar-links a:hover { color: var(--brass); }
 
-    /* ---------- Hero ---------- */
     .hero {
         display: flex;
         align-items: flex-start;
@@ -114,7 +117,6 @@
         margin: 0;
     }
 
-    /* ---------- Locator panel ---------- */
     .locator {
         background: var(--panel);
         border: 1px solid var(--panel-line);
@@ -205,7 +207,6 @@
         line-height: 1.4;
     }
 
-    /* ---------- Rail ---------- */
     .rail-section { padding: 20px 0 60px; }
 
     .rail-heading {
@@ -256,6 +257,9 @@
         border-radius: 14px;
         overflow: hidden;
         position: relative;
+        text-decoration: none;
+        color: inherit;
+        display: block;
         transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
         cursor: pointer;
     }
@@ -289,7 +293,7 @@
         background: #0D1119;
     }
 
-    .hotel-body { padding: 16px 16px 18px; }
+    .hotel-body { padding: 16px 16px 18px; position: relative; z-index: 2; }
 
     .hotel-loc {
         font-size: 10.5px;
@@ -340,7 +344,11 @@
         <div class="wordmark">WayToGo <span>Hotels</span></div>
         <div class="topbar-links">
             <a href="H_signup.html">List your hotel</a>
-            <a href="H_signin.html">Sign in</a>
+            <% if (isLoggedIn) { %>
+                <a href="#">Welcome, <%= session.getAttribute("name") %></a>
+            <% } else { %>
+                <a href="U_signIn.html">Sign in</a>
+            <% } %>
         </div>
     </div>
 
@@ -389,27 +397,30 @@
                     <div class="rail-empty">No properties found for that location.</div>
                 <% } else {
                     for (HashMap<String, String> hotel : hotelList) {
-                        String name     = hotel.get("hotel_name");
-                        String city     = hotel.get("city");
-                        String state    = hotel.get("state");
-                        String desc     = hotel.get("description");
-                        String imgLink  = hotel.get("h_image_link");
-                        
+                        String hotel_id = hotel.get("hotel_id");
+                        String name    = hotel.get("hotel_name");
+                        String city    = hotel.get("city");
+                        String state   = hotel.get("state");
+                        String desc    = hotel.get("description");
+                        String imgLink = hotel.get("h_image_link");
+                        if (imgLink == null || imgLink.trim().isEmpty()) {
+                            imgLink = "";
+                        }
                 %>
-                    <div class="hotel-card">
+                    <a href="<%= isLoggedIn ? "bookings?hotel_id=" + hotel_id : "U_signIn.html" %>" class="hotel-card">
                         <div class="pin">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#171208"/>
                                 <circle cx="12" cy="9" r="2.4" fill="#C6A15B"/>
                             </svg>
                         </div>
-                        <img class="hotel-photo" src="<%= imgLink %>"  loading="lazy">
+                        <img class="hotel-photo" src="<%= imgLink %>" alt="<%= name %>" loading="lazy">
                         <div class="hotel-body">
                             <p class="hotel-loc"><%= city %>, <%= state %></p>
                             <h3 class="hotel-name"><%= name %></h3>
                             <p class="hotel-desc"><%= desc != null ? desc : "" %></p>
                         </div>
-                    </div>
+                    </a>
                 <% } } %>
             </div>
         </div>

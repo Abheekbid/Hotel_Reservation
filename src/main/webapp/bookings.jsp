@@ -1,7 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8" import="java.util.Map"%>
     <%
-    String hotel_id = (String)request.getAttribute("hotel_id");
+    String hotel_id = (String) request.getAttribute("hotel_id");
+    String error = request.getParameter("error");
+    Map<String, String> roomIds = (Map<String, String>) request.getAttribute("roomIds");
     %>
 <!DOCTYPE html>
 <html>
@@ -173,6 +175,83 @@
             color: var(--parchment);
         }
 
+        .server-error {
+            font-size: 13px;
+            color: #E08A8A;
+            background: rgba(224, 138, 138, 0.1);
+            border: 1px solid rgba(224, 138, 138, 0.3);
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin: 0 0 20px;
+        }
+
+        .rail-heading {
+            margin: 0 0 14px;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+        }
+
+        .rail-heading h2 {
+            font-family: 'Fraunces', serif;
+            font-weight: 500;
+            font-size: 17px;
+            margin: 0;
+        }
+
+        .rail-heading span {
+            font-size: 11px;
+            color: var(--slate);
+        }
+
+        .room-rail {
+            display: flex;
+            gap: 14px;
+            overflow-x: auto;
+            padding: 4px 2px 14px;
+            margin-bottom: 22px;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: thin;
+            scrollbar-color: var(--brass) var(--panel);
+        }
+
+        .room-rail::-webkit-scrollbar { height: 6px; }
+        .room-rail::-webkit-scrollbar-track { background: var(--panel); border-radius: 8px; }
+        .room-rail::-webkit-scrollbar-thumb { background: var(--brass); border-radius: 8px; }
+
+        .room-card {
+            flex: 0 0 auto;
+            width: 110px;
+            height: 70px;
+            background: #0D1119;
+            border: 1px solid var(--panel-line);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            scroll-snap-align: start;
+            cursor: pointer;
+            text-decoration: none;
+            transition: border-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .room-card:hover {
+            border-color: var(--brass-soft);
+            transform: translateY(-2px);
+        }
+
+        .room-card .room-id {
+            font-family: 'Fraunces', serif;
+            font-size: 15px;
+            color: var(--parchment);
+        }
+
+        .no-rooms {
+            font-size: 13px;
+            color: var(--slate);
+            margin: 0 0 22px;
+        }
+
         .error {
             font-size: 12px;
             color: #E08A8A;
@@ -189,8 +268,28 @@
         <p class="sub">Enter your details and travel dates below.</p>
         <span class="hotel-id-badge">Hotel ID: <%= (hotel_id != null) ? hotel_id : "Not specified" %></span>
 
+        <% if ("invalid_dates".equals(error)) { %>
+            <p class="server-error">Check-out date must be after check-in date. Please choose valid travel dates.</p>
+        <% } %>
+
         <form id="bookingForm" action="bookings" method="post">
             <input type="hidden" name="hotel_id" value="<%= (hotel_id != null) ? hotel_id : "" %>">
+
+            <% if (roomIds != null && !roomIds.isEmpty()) { %>
+                <div class="rail-heading">
+                    <h2>Available Rooms</h2>
+                    <span>Scroll &rarr;</span>
+                </div>
+                <div class="room-rail">
+                    <% for (Map.Entry<String, String> entry : roomIds.entrySet()) { %>
+                        <a href="bookings?room_id=<%= entry.getKey() %>" class="room-card">
+                            <span class="room-number"><%= entry.getValue() %></span>
+                        </a>
+                    <% } %>
+                </div>
+            <% } else if (roomIds != null) { %>
+                <p class="no-rooms">No rooms available for the selected dates and room type.</p>
+            <% } %>
 
             <div class="field">
                 <label for="name">Full Name</label>

@@ -152,6 +152,20 @@
         @media (max-width: 420px) {
             .head, form { padding-left: 24px; padding-right: 24px; }
         }
+
+        input.invalid {
+            border-color: #B4694F;
+            box-shadow: 0 0 0 3px rgba(180, 105, 79, 0.25);
+        }
+
+        .err-msg {
+            font-size: 11.5px;
+            color: #C98771;
+            margin: -10px 0 10px;
+            display: none;
+        }
+
+        .err-msg.show { display: block; }
     </style>
 </head>
 <body>
@@ -168,11 +182,13 @@
             <div class="field">
                 <label for="email">Email <span class="required-mark">*</span></label>
                 <input type="email" id="email" name="email" placeholder="reservations@hotel.com" required>
+                <span class="err-msg"></span>
             </div>
 
             <div class="field">
                 <label for="password">Password <span class="required-mark">*</span></label>
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <span class="err-msg"></span>
             </div>
 
             <button type="submit">Sign in</button>
@@ -182,5 +198,34 @@
         </form>
     </div>
 
+<script>
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    document.querySelector('form').addEventListener('submit', function(e) {
+        let valid = true;
+
+        this.querySelectorAll('input[required]').forEach(f => {
+            const err = f.parentElement.querySelector('.err-msg');
+            if (!f.value.trim()) {
+                f.classList.add('invalid');
+                if (err) { err.textContent = 'This field is required.'; err.classList.add('show'); }
+                valid = false;
+            } else {
+                f.classList.remove('invalid');
+                if (err) err.classList.remove('show');
+            }
+        });
+
+        const emailField = document.getElementById('email');
+        const emailErr = emailField.parentElement.querySelector('.err-msg');
+        if (emailField.value.trim() && !emailRegex.test(emailField.value.trim())) {
+            emailField.classList.add('invalid');
+            if (emailErr) { emailErr.textContent = 'Enter a valid email address.'; emailErr.classList.add('show'); }
+            valid = false;
+        }
+
+        if (!valid) e.preventDefault();
+    });
+</script>
 </body>
 </html>

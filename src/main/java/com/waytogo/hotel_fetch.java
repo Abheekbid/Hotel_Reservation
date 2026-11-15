@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +29,10 @@ public class hotel_fetch extends HttpServlet {
 		ArrayList<HashMap<String, String>> hotelList = hf.fetchAllHotels();
 
 		request.setAttribute("hotelList", hotelList);
+
+		HttpSession session = request.getSession();
+		session.setAttribute("hotelList", hotelList);
+
 		request.getRequestDispatcher("/Hotel_Fetch.jsp").forward(request, response);
 	}
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -41,9 +46,14 @@ public class hotel_fetch extends HttpServlet {
             hotelList = hf.fetchHotelsByLocation(state, city);//SHOW THE FIRST TEN HOTELS FROM DB HOTELS
         } else {
             hotelList = hf.fetchAllHotels();//SHOW THE HOTELS WHOSE LOCATION IS SEARCHED
+            
         }
 
         request.setAttribute("hotelList", hotelList);
+
+        HttpSession session = request.getSession();
+        session.setAttribute("hotelList", hotelList);
+
         request.getRequestDispatcher("/Hotel_Fetch.jsp").forward(request, response);
     }
 }

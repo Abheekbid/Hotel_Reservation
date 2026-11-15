@@ -1,10 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" import="java.util.Map"%>
-    <%
+<%
     String hotel_id = (String) request.getAttribute("hotel_id");
+    if (hotel_id == null) hotel_id = (String) session.getAttribute("hotel_id");
     String error = request.getParameter("error");
+    @SuppressWarnings("unchecked")
     Map<String, String> roomIds = (Map<String, String>) request.getAttribute("roomIds");
-    %>
+%>
 <!DOCTYPE html>
 <html>
 <head>

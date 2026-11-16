@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Sign In — WayToGo Hotels</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink:        #10141F;
+            --panel:      #171C29;
+            --panel-line: #2A3143;
+            --brass:      #C6A15B;
+            --brass-soft: rgba(198,161,91,0.35);
+            --parchment:  #EDE7DA;
+            --slate:      #8890A3;
+            --danger:     #E08A8A;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            background: var(--ink);
+            background-image:
+                radial-gradient(circle at 12% 8%,  rgba(198,161,91,0.06), transparent 40%),
+                radial-gradient(circle at 88% 92%, rgba(198,161,91,0.05), transparent 40%);
+            font-family: 'Work Sans', sans-serif;
+            color: var(--parchment);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--panel);
+            border: 1px solid var(--panel-line);
+            border-radius: 14px;
+            padding: 38px 36px 34px;
+            box-shadow: 0 30px 60px -30px rgba(0,0,0,0.7);
+        }
+
+        .eyebrow {
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--brass);
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-family: 'Fraunces', serif;
+            font-weight: 500;
+            font-size: 26px;
+            margin-bottom: 6px;
+            color: var(--parchment);
+        }
+
+        .sub {
+            font-size: 13.5px;
+            color: var(--slate);
+            margin-bottom: 28px;
+        }
+
+        /* Error banner — shown via JS when ?error param is present */
+        .error-banner {
+            display: none;
+            background: rgba(224,138,138,0.12);
+            border: 1px solid rgba(224,138,138,0.35);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--danger);
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--slate);
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            background: #0D1119;
+            border: 1px solid var(--panel-line);
+            border-radius: 8px;
+            padding: 11px 14px;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 14px;
+            color: var(--parchment);
+            outline: none;
+            transition: border-color 0.15s;
+            margin-bottom: 18px;
+        }
+
+        input:focus { border-color: var(--brass-soft); }
+
+        input::placeholder { color: var(--slate); }
+
+        button[type="submit"] {
+            width: 100%;
+            background: var(--brass);
+            color: #10141F;
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: opacity 0.15s;
+            margin-top: 4px;
+        }
+
+        button[type="submit"]:hover { opacity: 0.88; }
+
+        .footer-note {
+            margin-top: 22px;
+            font-size: 12px;
+            color: var(--slate);
+            text-align: center;
+        }
+
+        .footer-note a {
+            color: var(--brass);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <p class="eyebrow">WayToGo Hotels</p>
+    <h1>Admin Sign In</h1>
+    <p class="sub">Restricted access. Enter your admin credentials.</p>
+
+    <div class="error-banner" id="errorBanner"></div>
+
+    <form id="signinForm" action="Adminsignin" method="post" novalidate>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email"
+               placeholder="admin@waytogo.com" required autocomplete="email">
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password"
+               placeholder="••••••••" required autocomplete="current-password">
+
+        <button type="submit">Sign In</button>
+    </form>
+
+    <p class="footer-note">
+        <a href="hotel_fetch">← Back to hotel listing</a>
+    </p>
+</div>
+
+<script>
+    // Show inline error from redirect ?error param
+    (function () {
+        const params  = new URLSearchParams(window.location.search);
+        const error   = params.get('error');
+        const banner  = document.getElementById('errorBanner');
+        const messages = {
+            invalid_credentials: 'Invalid email or password. Please try again.',
+            missing_fields:      'Email and password are both required.'
+        };
+        if (error && messages[error]) {
+            banner.textContent = messages[error];
+            banner.style.display = 'block';
+        }
+    })();
+
+    // Client-side required-field validation
+    document.getElementById('signinForm').addEventListener('submit', function (e) {
+        const email    = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const banner   = document.getElementById('errorBanner');
+
+        if (!email || !password) {
+            e.preventDefault();
+            banner.textContent = 'Email and password are both required.';
+            banner.style.display = 'block';
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -346,6 +346,7 @@
     <div class="topbar-right">
         <span class="admin-badge">Admin</span>
         <span class="admin-name"><%= adminName %></span>
+        <a href="hotel_fetch" class="logout-btn" style="color:var(--slate);">Home</a>
         <a class="logout-btn" href="AdminDashboard?action=logout">Sign out</a>
     </div>
 </div>

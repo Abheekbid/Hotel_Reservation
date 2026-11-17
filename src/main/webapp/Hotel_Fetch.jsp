@@ -13,6 +13,10 @@
     // Check if user is logged in
     String loggedInUser = (String) session.getAttribute("user_id");
     boolean isLoggedIn = (loggedInUser != null && !loggedInUser.isEmpty());
+
+    // Check if hotel owner is logged in
+    String loggedInHotel = (String) session.getAttribute("hotel_id");
+    boolean isHotelLoggedIn = (loggedInHotel != null && !loggedInHotel.isEmpty());
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -343,7 +347,12 @@
     <div class="topbar">
         <div class="wordmark">WayToGo <span>Hotels</span></div>
         <div class="topbar-links">
-            <a href="H_signup.html">List your hotel</a>
+            <% if (isHotelLoggedIn) { %>
+                <a href="Hotels">My Dashboard</a>
+            <% } else { %>
+                <a href="H_signup.html">List your hotel</a>
+            <% } %>
+            <a href="Adminsignin">Admin</a>
             <% if (isLoggedIn) { %>
                 <a href="#">Welcome, <%= session.getAttribute("name") %></a>
             <% } else { %>

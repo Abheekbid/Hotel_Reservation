@@ -1,4 +1,5 @@
 package com.waytogo;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -55,8 +56,7 @@ public class payment extends HttpServlet {
 		double totalPrice       = Double.parseDouble(session.getAttribute("total_price").toString());
 		double commissionRate   = Double.parseDouble(session.getAttribute("commission_rate").toString());
 		double commissionAmount = Double.parseDouble(session.getAttribute("commission_amount").toString());
-
-		BEANS.Bookings book = new BEANS.Bookings();
+		BEANS.bookings book = new BEANS.bookings();
 		book.setUser_id(user_id);
 		book.setHotel_id(hotel_id);
 		book.setroom_id(room_id);
@@ -74,9 +74,20 @@ public class payment extends HttpServlet {
 		boolean success = book.InsertMethod(room_id);
 
 		if (success) {
-			int bookingId=book.getBookingId();
-			session.setAttribute("bookingId", bookingId);
-			res.sendRedirect(req.getContextPath() + "/Payment_Success.jsp");
+			// Clear booking-related session attributes after successful payment
+			session.removeAttribute("room_id");
+			session.removeAttribute("room_number");
+			session.removeAttribute("room_type");
+			session.removeAttribute("check_in");
+			session.removeAttribute("check_out");
+			session.removeAttribute("room_price");
+			session.removeAttribute("number_of_days");
+			session.removeAttribute("total_price");
+			session.removeAttribute("commission_rate");
+			session.removeAttribute("commission_amount");
+			session.removeAttribute("hotel_id");
+
+			res.sendRedirect(req.getContextPath() + "/hotel_fetch");
 		} else {
 			res.sendRedirect(req.getContextPath() + "/payment?error=payment_failed");
 		}

@@ -1,6 +1,6 @@
 package com.waytogo;
-import java.util.ArrayList;
-import BEANS.Bookings;
+
+import BEANS.bookings;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,13 +15,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 
 /**
- * Servlet implementation class bookings
+ * Servlet implementation class Booking
  */
 @WebServlet("/bookings")
-public class bookings extends HttpServlet {
+public class Booking extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	public bookings() {
+	public Booking() {
 		super();
 	}
 
@@ -30,18 +30,13 @@ public class bookings extends HttpServlet {
 		String room_id = req.getParameter("room_id");
 
 		if (room_id != null) {
-			// User selected a room — store all booking details in session and go to payment
 			HttpSession session = req.getSession();
-
-			// room_id selected
 			session.setAttribute("room_id", room_id);
 
-			// Get room price from bean
-			Bookings book = new Bookings();
+			bookings book = new bookings();
 			book.setroom_id(room_id);
 			double roomPrice = book.getRoomPrice();
 
-			// Retrieve what was stored in session during POST
 			long numberOfDays = Long.parseLong(session.getAttribute("number_of_days").toString());
 			String room_type  = (String) session.getAttribute("room_type");
 
@@ -69,22 +64,12 @@ public class bookings extends HttpServlet {
 		String hotel_id = req.getParameter("hotel_id");
 		HttpSession session = req.getSession();
 		session.setAttribute("hotel_id", hotel_id);
-		
-		req.setAttribute("hotel_id", hotel_id);
-		String hotel_name = "";
-		@SuppressWarnings("unchecked")
-		ArrayList<HashMap<String, String>> hotelList =
-		    (ArrayList<HashMap<String, String>>) session.getAttribute("hotelList");
 
-		if (hotelList != null && hotel_id != null) {
-		    for (HashMap<String, String> hotel : hotelList) {
-		        if (hotel_id.equals(hotel.get("hotel_id"))) {
-		            hotel_name = hotel.get("hotel_name");
-		            break;
-		        }
-		    }
-		}
+		bookings book = new bookings();
+		String hotel_name = book.getHotelName(hotel_id);
 		session.setAttribute("hotel_name", hotel_name);
+
+		req.setAttribute("hotel_id", hotel_id);
 		RequestDispatcher rd = req.getRequestDispatcher("bookings.jsp");
 		rd.forward(req, res);
 	}
@@ -112,7 +97,7 @@ public class bookings extends HttpServlet {
 			return;
 		}
 
-		Bookings book = new Bookings();
+		bookings book = new bookings();
 		book.setName(name);
 		book.setEmail(email);
 		book.setCheck_in(check_in);
@@ -121,17 +106,15 @@ public class bookings extends HttpServlet {
 		book.setHotel_id(hotel_id);
 		book.setNumberOfDays(numberOfDays);
 
-		// Store form details in session for use across pages
 		session = req.getSession();
-		session.setAttribute("name",          name);
-		session.setAttribute("email",         email);
-		session.setAttribute("check_in",      check_in);
-		session.setAttribute("check_out",     check_out);
-		session.setAttribute("room_type",     room_type);
-		session.setAttribute("hotel_id",      hotel_id);
+		session.setAttribute("name",           name);
+		session.setAttribute("email",          email);
+		session.setAttribute("check_in",       check_in);
+		session.setAttribute("check_out",      check_out);
+		session.setAttribute("room_type",      room_type);
+		session.setAttribute("hotel_id",       hotel_id);
 		session.setAttribute("number_of_days", numberOfDays);
 
-		// Get available rooms
 		HashMap<String, String> map = book.check_reserv();
 		req.setAttribute("roomIds",  map);
 		req.setAttribute("hotel_id", hotel_id);

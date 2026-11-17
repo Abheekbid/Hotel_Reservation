@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.HashMap;
 
-public class Bookings {
+public class bookings {
 	
 	private int    bookingId;
 	private String user_id;

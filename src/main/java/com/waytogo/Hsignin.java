@@ -45,7 +45,7 @@ public class Hsignin extends HttpServlet {
 			session.setAttribute("hotel_id",   hotelData.get("hotel_id"));
 			session.setAttribute("hotel_name", hotelData.get("hotel_name"));
 			session.setAttribute("email",      hotelData.get("email"));
-
+			session.setAttribute("description",      hotelData.get("description"));
 			res.sendRedirect(req.getContextPath() + "/hotel_fetch");
 		} else {
 			pw.println("Invalid email or password. <a href='H_signin.html'>Try again</a>");

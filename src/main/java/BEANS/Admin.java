@@ -205,7 +205,7 @@ public class Admin {
             db.DBconnect();
 
             PreparedStatement ps = db.con.prepareStatement(
-                "SELECT BOOKING_ID, USER_ID, ROOM_ID, HOTEL_ID, HOTEL_NAME, NAME, EMAIL, " +
+                "SELECT BOOKING_ID, USER_ID, ROOM_ID, HOTEL_ID, NAME, EMAIL, " +
                 "TO_CHAR(CHECK_IN,  'YYYY-MM-DD') AS CHECK_IN,  " +
                 "TO_CHAR(CHECK_OUT, 'YYYY-MM-DD') AS CHECK_OUT, " +
                 "NUMBER_OF_DAYS, ROOM_PRICE, TOTAL_PRICE, " +

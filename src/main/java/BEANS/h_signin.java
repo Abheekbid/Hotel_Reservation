@@ -33,7 +33,7 @@ public class h_signin {
 
 			Statement stmt = db.stmt;
 
-			String s1 = "SELECT HOTEL_ID, HOTEL_NAME, EMAIL FROM hotels WHERE email='" + email + "' and password='" + password + "'";
+			String s1 = "SELECT HOTEL_ID, HOTEL_NAME, EMAIL,DESCRIPTION FROM hotels WHERE email='" + email + "' and password='" + password + "'";
 
 			ResultSet rs = stmt.executeQuery(s1);
 
@@ -42,6 +42,7 @@ public class h_signin {
 				hotelData.put("hotel_id",   rs.getString("HOTEL_ID"));
 				hotelData.put("hotel_name", rs.getString("HOTEL_NAME"));
 				hotelData.put("email",      rs.getString("EMAIL"));
+				hotelData.put("description",rs.getString("DESCRIPTION"));
 				return hotelData;
 			} else {
 				return null;
